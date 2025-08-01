@@ -1,57 +1,57 @@
+// lib/feature/booking/presentation/view_model/complete_state.dart
 
-// Base class for all states within the booking history feature.
 import 'package:equatable/equatable.dart';
+// Make sure this import points to your actual BookingEntity file
 import 'package:motofix_app/feature/booking/domain/entity/booking_entity.dart';
 
 abstract class BookingHistoryState extends Equatable {
   const BookingHistoryState();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
-// --- States for the List View ---
-
-/// The initial state before anything is fetched.
 class BookingHistoryInitial extends BookingHistoryState {}
-
-/// State when the list of completed bookings is being fetched.
 class BookingHistoryListLoading extends BookingHistoryState {}
 
-/// State when the list of completed bookings has been successfully loaded.
-class BookingHistoryListLoaded extends BookingHistoryState {
-  final List<BookingEntity> bookings;
+class BookingHistoryFailure extends BookingHistoryState {
+  final String error;
+  const BookingHistoryFailure(this.error);
 
-  const BookingHistoryListLoaded(this.bookings);
+  @override
+  List<Object> get props => [error];
+}
+
+// Base state that holds the list of bookings.
+abstract class BookingHistoryWithData extends BookingHistoryState {
+  final List<BookingEntity> bookings;
+  const BookingHistoryWithData(this.bookings);
 
   @override
   List<Object> get props => [bookings];
 }
 
-// --- States for the Detail View ---
-
-/// State when a single booking's details are being fetched.
-class BookingHistoryDetailLoading extends BookingHistoryState {}
-
-/// State when a single booking's details have been successfully loaded.
-class BookingHistoryDetailLoaded extends BookingHistoryState {
-  final BookingEntity booking;
-
-  const BookingHistoryDetailLoaded(this.booking);
-
-  @override
-  List<Object> get props => [booking];
+class BookingHistoryListLoaded extends BookingHistoryWithData {
+  const BookingHistoryListLoaded(super.bookings);
 }
 
+// *** THE FIX: Define the missing state class ***
+// This state represents that details for one item are being loaded,
+// while still retaining the main list in the background.
+class BookingHistoryDetailLoading extends BookingHistoryWithData {
+  const BookingHistoryDetailLoading({required List<BookingEntity> bookings})
+      : super(bookings);
+}
 
-// --- Common Failure State ---
+// This state represents that details have been successfully loaded.
+class BookingHistoryDetailLoaded extends BookingHistoryWithData {
+  final BookingEntity booking;
 
-/// A shared failure state for any operation that might fail.
-class BookingHistoryFailure extends BookingHistoryState {
-  final String error;
-
-  const BookingHistoryFailure(this.error);
+  const BookingHistoryDetailLoaded({
+    required this.booking,
+    required List<BookingEntity> bookings,
+  }) : super(bookings);
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [booking, bookings];
 }
