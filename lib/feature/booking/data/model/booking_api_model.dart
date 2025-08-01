@@ -19,6 +19,7 @@ class BookingApiModel {
   final String? paymentStatus;
   final bool? isPaid;
   final String? paymentMethod;
+  final bool? isReviewed; 
 
   BookingApiModel({
     this.id,
@@ -32,6 +33,7 @@ class BookingApiModel {
     this.paymentStatus,
     this.isPaid,
     this.paymentMethod,
+    this.isReviewed
   });
 
   factory BookingApiModel.fromJson(Map<String, dynamic> json) =>
@@ -56,6 +58,7 @@ class BookingApiModel {
       paymentStatus: paymentStatus ?? 'Unpaid',
       isPaid: isPaid ?? false,
       paymentMethod: paymentMethod ?? 'Not specified',
+      isReviewed: isReviewed ?? false, 
     );
   }
 
@@ -72,6 +75,7 @@ class BookingApiModel {
       paymentStatus: entity.paymentStatus,
       isPaid: entity.isPaid,
       paymentMethod: entity.paymentMethod,
+      isReviewed: entity.isPaid
     );
   }
 

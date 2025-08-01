@@ -12,4 +12,6 @@ abstract class BookingRepository {
       String bookingId, String? token);
   Future<Either<Failure, BookingEntity>> confirmCodPayment(String bookingId);
   Future<Either<Failure, void>> verifyKhaltiPayment();
+  Future<Either<Failure, List<BookingEntity>>> getCompletedBookings(String? token); 
+  Future<Either<Failure, BookingEntity>> getBookingById(String bookingId, String? token);
 }

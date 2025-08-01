@@ -12,6 +12,7 @@ class BookingEntity extends Equatable {
   final String? paymentStatus; // 'Pending', 'Paid'
   final bool? isPaid;
   final String? paymentMethod; // 'COD', 'Khalti'
+  final bool? isReviewed; 
 
   const BookingEntity({
     this.id,
@@ -25,8 +26,9 @@ class BookingEntity extends Equatable {
     this.paymentStatus,
     this.isPaid,
     this.paymentMethod,
+    this.isReviewed
   });
 
   @override
-  List<Object?> get props => [id, status, paymentStatus, date];
+  List<Object?> get props => [id, status, paymentStatus, date , isReviewed];
 }

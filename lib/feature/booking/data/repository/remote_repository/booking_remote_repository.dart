@@ -62,4 +62,24 @@ class BookingRemoteRepository implements BookingRepository {
     // TODO: implement verifyKhaltiPayment
     throw UnimplementedError();
   }
+  
+  @override
+  Future<Either<Failure, List<BookingEntity>>> getCompletedBookings(String? token) async {
+    try {
+      final bookings = await _remoteBookingDataSource.getCompletedBookings(token);
+      return Right(bookings);
+    } catch (e) {
+      return Left(ApiFailure(statusCode: 500, message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, BookingEntity>> getBookingById(String bookingId, String? token) async {
+    try {
+      final booking = await _remoteBookingDataSource.getBookingById(bookingId, token);
+      return Right(booking);
+    } catch (e) {
+      return Left(ApiFailure(statusCode: 500, message: e.toString()));
+    }
+  }
 }

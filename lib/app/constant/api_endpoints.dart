@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 class ApiEndpoints {
   ApiEndpoints._();
 
@@ -22,6 +24,8 @@ class ApiEndpoints {
 
   static const String deleteBooking = 'user/bookings/:id';
   static const String updateBooking = 'user/bookings/:id';
+  static const String completedBookings = 'user/booking/completed'; 
+  static const String bookingById = 'user/bookings/'; 
 
   // ========== services =======
   static const String getAllServices = '/user/services';
@@ -32,4 +36,7 @@ class ApiEndpoints {
   // ========== notifications (NEW) =======
   static const String getNotifications = "user/notifications";
   static const String markNotificationsAsRead = "user/notifications/mark-read";
+
+  static const String createReview = "user/reviews" ;
+  static const String getReviews = "user/reviews/service/:serviceId" ;
 }

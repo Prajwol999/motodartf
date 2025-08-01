@@ -480,7 +480,7 @@ class _BookingViewState extends State<BookingView> with TickerProviderStateMixin
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => BookingDetailView(booking: booking),
+                builder: (context) => BookingDetailView(booking: booking , bookingId: booking.id.toString(),),
               ),
             );
           },

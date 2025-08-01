@@ -26,4 +26,16 @@ class LocalBookingDataSource implements BookingDataSource {
     // TODO: implement getUserBooking
     throw UnimplementedError();
   }
+  
+  @override
+  Future<BookingEntity> getBookingById(String bookingId, String? token) {
+    // TODO: implement getBookingById
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<List<BookingEntity>> getCompletedBookings(String? token) {
+    // TODO: implement getCompletedBookings
+    throw UnimplementedError();
+  }
 }

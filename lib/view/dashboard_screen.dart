@@ -5,8 +5,11 @@ import 'package:motofix_app/core/common/app_colors.dart';
 import 'package:motofix_app/core/common/dashboard_sensor.dart';
 import 'package:motofix_app/feature/auth/presentation/view_model/profile_view_model/profile_view_model.dart';
 import 'package:motofix_app/feature/booking/presentation/view/booking_view.dart';
+import 'package:motofix_app/feature/booking/presentation/view/complete_history/complete_history_page.dart';
 import 'package:motofix_app/feature/booking/presentation/view_model/booking_view_model.dart';
+import 'package:motofix_app/feature/booking/presentation/view_model/complete_view_model.dart';
 import 'package:motofix_app/feature/customer_service/presentation/view_model/service_view_model.dart';
+import 'package:motofix_app/feature/review/presentation/view_model/review_view_model.dart';
 import 'package:motofix_app/view/history_screen.dart';
 import 'package:motofix_app/feature/auth/presentation/view/profile_screen.dart';
 import 'package:motofix_app/view/home_screen.dart';
@@ -27,6 +30,9 @@ class MotoFixDashboard extends StatelessWidget {
         BlocProvider.value(value: serviceLocator<ServiceViewModel>()),
         BlocProvider.value(value: serviceLocator<BookingViewModel>()),
         BlocProvider.value(value: serviceLocator<ProfileViewModel>()),
+        BlocProvider.value(value: serviceLocator<BookingHistoryBloc>()) ,
+         BlocProvider.value(value: serviceLocator<ReviewBloc>()) ,
+
       ],
       child: const _DashboardView(),
     );
@@ -46,7 +52,7 @@ class __DashboardViewState extends State<_DashboardView> {
   static final List<Widget> _widgetOptions = <Widget>[
     const HomeScreen(),
     const BookingView(),
-    const HistoryScreen(),
+    const BookingHistoryPage(),
     const ProfileViewPage(),
   ];
 

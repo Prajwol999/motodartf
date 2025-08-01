@@ -134,7 +134,7 @@ import 'package:intl/intl.dart';
 class BookingDetailView extends StatelessWidget {
   final BookingEntity booking;
 
-  const BookingDetailView({super.key, required this.booking});
+  const BookingDetailView({super.key, required this.booking, required String bookingId});
 
   // Helper method to determine color based on status
   Color _getStatusColor(String status) {

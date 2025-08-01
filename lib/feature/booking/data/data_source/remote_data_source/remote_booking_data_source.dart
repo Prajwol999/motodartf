@@ -94,4 +94,49 @@ class RemoteBookingDataSource implements BookingDataSource {
       throw Exception('An unexpected error occured : $e');
     }
   }
+  
+  @override
+  Future<List<BookingEntity>> getCompletedBookings(String? token) async {
+    try {
+      final response = await _apiService.dio.get(
+        ApiEndpoints.baseUrl + ApiEndpoints.completedBookings, // Use correct endpoint
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      print('completejsndnjgshsng $response') ;
+
+      if (response.statusCode == 200) {
+        GetAllBookingDto getAllBookingDto = GetAllBookingDto.fromJson(response.data);
+        return BookingApiModel.toEntityList(getAllBookingDto.data);
+      } else {
+        throw Exception('Failed to fetch completed bookings: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      throw Exception("Failed to fetch completed bookings: ${e.message}");
+    } catch (e) {
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
+
+  @override
+  Future<BookingEntity> getBookingById(String bookingId, String? token) async {
+    try {
+      // Append the bookingId to the URL
+      final response = await _apiService.dio.get(
+        ApiEndpoints.baseUrl + ApiEndpoints.bookingById + bookingId,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200) {
+        // The response data for a single booking is likely nested under a 'data' key
+        BookingApiModel bookingModel = BookingApiModel.fromJson(response.data['data']);
+        return bookingModel.toEntity();
+      } else {
+        throw Exception('Failed to fetch booking details: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      throw Exception("Failed to fetch booking details: ${e.message}");
+    } catch (e) {
+      throw Exception('An unexpected error occurred: $e');
+    }
+  }
 }
