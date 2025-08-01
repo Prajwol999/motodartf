@@ -28,13 +28,14 @@ class BookingHiveModelAdapter extends TypeAdapter<BookingHiveModel> {
       paymentStatus: fields[8] as String?,
       isPaid: fields[9] as bool?,
       paymentMethod: fields[10] as String?,
+      isReviewed: fields[11] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, BookingHiveModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class BookingHiveModelAdapter extends TypeAdapter<BookingHiveModel> {
       ..writeByte(9)
       ..write(obj.isPaid)
       ..writeByte(10)
-      ..write(obj.paymentMethod);
+      ..write(obj.paymentMethod)
+      ..writeByte(11)
+      ..write(obj.isReviewed);
   }
 
   @override

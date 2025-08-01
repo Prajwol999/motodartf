@@ -46,7 +46,7 @@ class UserApiModel extends Equatable {
       password: password ?? '',
       phone: phone  ?? '',
       address:  address  ?? '',
-      profilePicture: profilePicture ?? ''
+      profilePicture: profilePicture ?? '', id: ''
     );
   }
 

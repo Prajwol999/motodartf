@@ -16,7 +16,7 @@ class UserEntity extends Equatable {
       required this.password,
       this.phone,
       this.address,
-      this.profilePicture});
+      this.profilePicture, required String id});
 
   UserEntity copyWith({
     String? userId,
@@ -34,7 +34,7 @@ class UserEntity extends Equatable {
       password: password ?? this.password,
       phone: phone ?? this.phone,
       address: address ?? this.address,
-      profilePicture: profilePicture ?? this.profilePicture,
+      profilePicture: profilePicture ?? this.profilePicture, id: '',
     );
   }
 

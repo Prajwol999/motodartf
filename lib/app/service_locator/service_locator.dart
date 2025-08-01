@@ -20,6 +20,7 @@
 // import 'package:motofix_app/feature/notification/domain/use_case/get_notifications_usecase.dart';
 // import 'package:motofix_app/feature/notification/domain/use_case/mark_as_read_usecase.dart';
 // import 'package:motofix_app/feature/notification/presentation/view_model/notification_view_model.dart';
+// import 'package:motofix_app/feature/splash/view_model/spash_view_model.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 // import '../../feature/auth/domain/use_case/user_delete_usecase.dart';
@@ -44,7 +45,8 @@
 //   await _initAuthModule();
 //   await _initBookingModule();
 //   await _initServiceModule();
-//   await _initNotificationModule(); // New module added
+//   await _initNotificationModule();
+//   await _initSplashModule();
 // }
 
 // Future _initHiveService() async {
@@ -52,10 +54,8 @@
 // }
 
 // Future _initApiService() async {
-//   // Pass the Dio instance configured with the interceptor
 //   serviceLocator.registerLazySingleton<ApiService>(() => ApiService(Dio()));
 // }
-
 
 // Future<void> _initSharedPrefs() async {
 //   final sharedPrefs = await SharedPreferences.getInstance();
@@ -68,17 +68,17 @@
 // }
 
 // Future<void> _initAuthModule() async {
-//   // ===================== Data Source ====================
+//   // Data Source
 //   serviceLocator.registerFactory(
 //       () => UserRemoteDataSource(apiService: serviceLocator<ApiService>()));
 
-//   // ===================== Repository ====================
+//   // Repository
 //   serviceLocator.registerFactory(
 //     () => UserRemoteRepository(
 //         userRemoteDataSource: serviceLocator<UserRemoteDataSource>()),
 //   );
 
-//   // ===================== Use Cases ====================
+//   // Use Cases
 //   serviceLocator.registerFactory(
 //     () => UserLoginUseCase(
 //         userRepository: serviceLocator<UserRemoteRepository>(),
@@ -116,7 +116,7 @@
 //   serviceLocator.registerFactory(
 //       () => UserLogoutUseCase(tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()));
 
-//   // ===================== ViewModels ====================
+//   // ViewModels
 //   serviceLocator.registerFactory<RegisterViewModel>(
 //     () => RegisterViewModel(serviceLocator<UserRegisterUseCase>()),
 //   );
@@ -136,26 +136,22 @@
 // }
 
 // Future<void> _initBookingModule() async {
-//   // ===================== Data Source ====================
+//   // Data Source
 //   serviceLocator.registerFactory<RemoteBookingDataSource>(
 //     () => RemoteBookingDataSource(apiService: serviceLocator<ApiService>()),
 //   );
 
-//   // ===================== Repository ====================
+//   // Repository
 //   serviceLocator.registerFactory<BookingRemoteRepository>(
 //     () => BookingRemoteRepository(
 //       remoteBookingDataSource: serviceLocator<RemoteBookingDataSource>(),
 //     ),
 //   );
   
-//   // This registration seems incorrect as it depends on itself.
-//   // It should likely be registering the implementation (BookingRemoteRepository)
-//   // for the abstract class (BookingRepository).
-//   // I am assuming you want to register BookingRemoteRepository for the BookingRepository interface.
 //   serviceLocator.registerFactory<BookingRepository>(
 //       () => serviceLocator<BookingRemoteRepository>());
 
-//   // ===================== Use Cases ====================
+//   // Use Cases
 //   serviceLocator.registerFactory(() => GetUserBookings(
 //       bookingRepository: serviceLocator<BookingRemoteRepository>(),
 //       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()));
@@ -172,7 +168,7 @@
 //         tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
 //   );
 
-//   // ===================== ViewModel (BLoC) ====================
+//   // ViewModel (BLoC)
 //   serviceLocator.registerFactory<BookingViewModel>(
 //     () => BookingViewModel(
 //       getUserBookingsUseCase: serviceLocator<GetUserBookings>(),
@@ -183,19 +179,19 @@
 // }
 
 // Future<void> _initServiceModule() async {
-//   // ===================== Data Source ====================
+//   // Data Source
 //   serviceLocator.registerFactory(
 //     () => ServiceRemoteDataSource(apiService: serviceLocator<ApiService>()),
 //   );
   
-//   // ===================== Repository ====================
+//   // Repository
 //   serviceLocator.registerFactory<ServiceRemoteRepository>(
 //     () => ServiceRemoteRepository(
 //       serviceRemoteDataSource: serviceLocator<ServiceRemoteDataSource>(),
 //     ),
 //   );
 
-//   // ===================== Use Cases ====================
+//   // Use Cases
 //   serviceLocator.registerFactory(
 //     () => GetAllServicesUsecase(
 //       serviceRepository: serviceLocator<ServiceRemoteRepository>(),
@@ -203,7 +199,7 @@
 //     ),
 //   );
 
-//   // ===================== ViewModel ====================
+//   // ViewModel
 //   serviceLocator.registerFactory<ServiceViewModel>(
 //     () => ServiceViewModel(
 //       getAllServicesUsecase: serviceLocator<GetAllServicesUsecase>(),
@@ -212,20 +208,19 @@
 // }
 
 // Future<void> _initNotificationModule() async {
-//   // ===================== Data Source ====================
+//   // Data Source
 //   serviceLocator.registerFactory(
 //     () => NotificationRemoteDataSource(dio: serviceLocator<ApiService>().dio),
 //   );
 
-//   // ===================== Repository ====================
-//   // Register the implementation for the interface
+//   // Repository
 //   serviceLocator.registerFactory<INotificationRepository>(
 //     () => NotificationRepositoryImpl(
 //       remoteDataSource: serviceLocator<NotificationRemoteDataSource>(),
 //     ),
 //   );
 
-//   // ===================== Use Cases ====================
+//   // Use Cases
 //   serviceLocator.registerFactory(
 //     () => GetNotificationsUseCase(
 //       repository: serviceLocator<INotificationRepository>(),
@@ -237,7 +232,7 @@
 //     ),
 //   );
 
-//   // ===================== ViewModel (BLoC) ====================
+//   // ViewModel (BLoC)
 //   serviceLocator.registerFactory<NotificationViewModel>(
 //     () => NotificationViewModel(
 //       getNotificationsUseCase: serviceLocator<GetNotificationsUseCase>(),
@@ -245,6 +240,16 @@
 //     ),
 //   );
 // }
+
+// Future<void> _initSplashModule() async {
+//   // ViewModel (Cubit)
+//   serviceLocator.registerFactory<SplashCubit>(
+//     () => SplashCubit(
+//       checkAuthStatusUseCase: serviceLocator<CheckAuthStatusUseCase>(),
+//     ),
+//   );
+// }
+
 
 
 import 'package:dio/dio.dart';
@@ -269,8 +274,17 @@ import 'package:motofix_app/feature/notification/domain/repository/notification_
 import 'package:motofix_app/feature/notification/domain/use_case/get_notifications_usecase.dart';
 import 'package:motofix_app/feature/notification/domain/use_case/mark_as_read_usecase.dart';
 import 'package:motofix_app/feature/notification/presentation/view_model/notification_view_model.dart';
+import 'package:motofix_app/feature/reviews/presentation/view_model/review_view_model.dart';
 import 'package:motofix_app/feature/splash/view_model/spash_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// --- NEW IMPORTS FOR REVIEW FEATURE ---
+import '../../feature/reviews/data/data_source/remote_data_source/review_remote_data_source.dart';
+import '../../feature/reviews/data/repository/review_repository.dart';
+import '../../feature/reviews/domain/repository/review_repository.dart';
+import '../../feature/reviews/domain/usecases/create_review_usecase.dart';
+import '../../feature/reviews/domain/usecases/get_service_reviews_usecase.dart';
+// --- END OF NEW IMPORTS ---
 
 import '../../feature/auth/domain/use_case/user_delete_usecase.dart';
 import '../../feature/auth/domain/use_case/user_get_usecase.dart';
@@ -296,6 +310,7 @@ Future initDependencies() async {
   await _initServiceModule();
   await _initNotificationModule();
   await _initSplashModule();
+  await _initReviewModule(); // --- ADD THIS LINE ---
 }
 
 Future _initHiveService() async {
@@ -303,8 +318,11 @@ Future _initHiveService() async {
 }
 
 Future _initApiService() async {
-  serviceLocator.registerLazySingleton<ApiService>(() => ApiService(Dio()));
+    // Corrected ApiService registration to use DioService
+    serviceLocator.registerLazySingleton<ApiService>(() => ApiService(Dio()));
+    serviceLocator.registerLazySingleton<ApiService>(() => ApiService(serviceLocator<ApiService>().dio));
 }
+
 
 Future<void> _initSharedPrefs() async {
   final sharedPrefs = await SharedPreferences.getInstance();
@@ -322,7 +340,7 @@ Future<void> _initAuthModule() async {
       () => UserRemoteDataSource(apiService: serviceLocator<ApiService>()));
 
   // Repository
-  serviceLocator.registerFactory(
+  serviceLocator.registerFactory<UserRemoteRepository>(
     () => UserRemoteRepository(
         userRemoteDataSource: serviceLocator<UserRemoteDataSource>()),
   );
@@ -402,18 +420,18 @@ Future<void> _initBookingModule() async {
 
   // Use Cases
   serviceLocator.registerFactory(() => GetUserBookings(
-      bookingRepository: serviceLocator<BookingRemoteRepository>(),
+      bookingRepository: serviceLocator<BookingRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()));
   serviceLocator.registerFactory(
     () => DeleteBookingUsecase(
-      bookingRepository: serviceLocator<BookingRemoteRepository>(),
+      bookingRepository: serviceLocator<BookingRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
   serviceLocator.registerFactory(
     () => CreateBookingUseCase(
-        bookingRepository: serviceLocator<BookingRemoteRepository>(),
+        bookingRepository: serviceLocator<BookingRepository>(),
         tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
   );
 
@@ -489,6 +507,38 @@ Future<void> _initNotificationModule() async {
     ),
   );
 }
+
+// --- NEW REVIEW MODULE ---
+Future<void> _initReviewModule() async {
+  // Data Source
+  serviceLocator.registerFactory<ReviewRemoteDataSource>(
+    () => ReviewRemoteDataSource(serviceLocator<ApiService>()),
+  );
+
+  // Repository
+  serviceLocator.registerFactory<IReviewRepository>(
+    () => ReviewRepositoryImpl(serviceLocator<ReviewRemoteDataSource>()),
+  );
+
+  // Use Cases
+  serviceLocator.registerFactory<CreateReviewUseCase>(
+    () => CreateReviewUseCase(serviceLocator<IReviewRepository>()),
+  );
+  serviceLocator.registerFactory<GetServiceReviewsUseCase>(
+    () => GetServiceReviewsUseCase(serviceLocator<IReviewRepository>()),
+  );
+
+  // ViewModel
+  serviceLocator.registerFactory<ReviewViewModel>(
+    () => ReviewViewModel(
+      createReviewUseCase: serviceLocator<CreateReviewUseCase>(),
+      getServiceReviewsUseCase: serviceLocator<GetServiceReviewsUseCase>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+}
+// --- END OF NEW REVIEW MODULE ---
+
 
 Future<void> _initSplashModule() async {
   // ViewModel (Cubit)

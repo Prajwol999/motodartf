@@ -1,5 +1,3 @@
-// data/model/booking_api_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entity/booking_entity.dart';
 
@@ -19,6 +17,8 @@ class BookingApiModel {
   final String? paymentStatus;
   final bool? isPaid;
   final String? paymentMethod;
+  // --- NEW FIELD ---
+  final bool? isReviewed;
 
   BookingApiModel({
     this.id,
@@ -32,6 +32,8 @@ class BookingApiModel {
     this.paymentStatus,
     this.isPaid,
     this.paymentMethod,
+    // --- NEW FIELD ---
+    this.isReviewed,
   });
 
   factory BookingApiModel.fromJson(Map<String, dynamic> json) =>
@@ -39,23 +41,21 @@ class BookingApiModel {
 
   Map<String, dynamic> toJson() => _$BookingApiModelToJson(this);
 
-  // --- THIS IS THE CORRECTED METHOD ---
   BookingEntity toEntity() {
     return BookingEntity(
-      // Provide a default empty string if id is null
       id: id ?? '',
-      // Provide a default value for every nullable field
       customerName: customerName ?? 'Unknown Customer',
       serviceType: serviceType ?? 'Unknown Service',
       bikeModel: bikeModel ?? 'N/A',
-      date:
-          date ?? DateTime.now(), // Default to the current time if date is null
+      date: date ?? DateTime.now(),
       notes: notes ?? '',
       totalCost: totalCost ?? 0.0,
       status: status ?? 'Pending',
       paymentStatus: paymentStatus ?? 'Unpaid',
       isPaid: isPaid ?? false,
       paymentMethod: paymentMethod ?? 'Not specified',
+      // --- NEW FIELD ---
+      isReviewed: isReviewed ?? false,
     );
   }
 
@@ -72,11 +72,12 @@ class BookingApiModel {
       paymentStatus: entity.paymentStatus,
       isPaid: entity.isPaid,
       paymentMethod: entity.paymentMethod,
+      // --- NEW FIELD ---
+      isReviewed: entity.isReviewed,
     );
   }
 
   static List<BookingEntity> toEntityList(List<BookingApiModel> models) {
-    // This now safely converts a list of models to a list of entities
     return models.map((model) => model.toEntity()).toList();
   }
 }

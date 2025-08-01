@@ -32,7 +32,7 @@ class UserHiveModel extends HiveObject {
     userId: userId,
     fullName: fullName,
     email: email,
-    password: password,
+    password: password, id: '',
 
   );
 

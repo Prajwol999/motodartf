@@ -38,7 +38,7 @@ class UserRegisterUseCase
     final userEntity = UserEntity(
       fullName: params.fullName,
       email: params.email,
-      password: params.password,
+      password: params.password, id: '',
     );
 
     return _userRepository.registerUser(userEntity);

@@ -20,6 +20,7 @@ BookingApiModel _$BookingApiModelFromJson(Map<String, dynamic> json) =>
       paymentStatus: json['paymentStatus'] as String?,
       isPaid: json['isPaid'] as bool?,
       paymentMethod: json['paymentMethod'] as String?,
+      isReviewed: json['isReviewed'] as bool?,
     );
 
 Map<String, dynamic> _$BookingApiModelToJson(BookingApiModel instance) =>
@@ -35,4 +36,5 @@ Map<String, dynamic> _$BookingApiModelToJson(BookingApiModel instance) =>
       'paymentStatus': instance.paymentStatus,
       'isPaid': instance.isPaid,
       'paymentMethod': instance.paymentMethod,
+      'isReviewed': instance.isReviewed,
     };

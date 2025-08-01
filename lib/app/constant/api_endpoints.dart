@@ -18,7 +18,7 @@ class ApiEndpoints {
 
   // ========== booking =======
   static const String getAllBooking = "/user/bookings";
-  static const String createBooking = '/user/bookings';
+  static const String createBooking = '/user/actions/bookings';
 
   static const String deleteBooking = 'user/bookings/:id';
   static const String updateBooking = 'user/bookings/:id';
@@ -26,6 +26,10 @@ class ApiEndpoints {
   // ========== services =======
   static const String getAllServices = '/user/services';
   
+  // ========== reviews (NEW) =======
+  static const String createReview = "user/reviews";
+  static const String getServiceReviews = "user/reviews/service/:serviceId";
+
   // ========== profile =======
   static const String userProfile = "user/profile";
 
