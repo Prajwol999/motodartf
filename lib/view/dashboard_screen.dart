@@ -1,8 +1,7 @@
-// lib/view/dashboard_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:motofix_app/core/common/app_colors.dart';
 import 'package:motofix_app/core/common/dashboard_sensor.dart';
 import 'package:motofix_app/feature/auth/presentation/view_model/profile_view_model/profile_view_model.dart';
 import 'package:motofix_app/feature/booking/presentation/view/booking_view.dart';
@@ -29,14 +28,11 @@ class MotoFixDashboard extends StatelessWidget {
         BlocProvider.value(value: serviceLocator<BookingViewModel>()),
         BlocProvider.value(value: serviceLocator<ProfileViewModel>()),
       ],
-      // The child is the new stateful view that will handle the sensor.
       child: const _DashboardView(),
     );
   }
 }
 
-/// This is the private, stateful widget that builds the UI and manages
-/// the sensor handler's lifecycle.
 class _DashboardView extends StatefulWidget {
   const _DashboardView();
 
@@ -45,7 +41,6 @@ class _DashboardView extends StatefulWidget {
 }
 
 class __DashboardViewState extends State<_DashboardView> {
-  // NEW: A reference to our sensor handler.
   late final DashboardGyroHandler _gyroHandler;
 
   static final List<Widget> _widgetOptions = <Widget>[
@@ -58,26 +53,22 @@ class __DashboardViewState extends State<_DashboardView> {
   @override
   void initState() {
     super.initState();
-    // NEW: Initialize the handler in initState, passing the widget's context.
-    // This context has access to the providers from MultiBlocProvider.
     _gyroHandler = DashboardGyroHandler(context: context);
     _gyroHandler.startListening();
   }
 
   @override
   void dispose() {
-    // NEW: Cleanly dispose of the handler to stop listening to the sensor.
     _gyroHandler.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // The UI is built by listening to the navigation cubit.
     return BlocBuilder<BottomNavigationCubit, int>(
       builder: (context, selectedIndex) {
         return Scaffold(
-          backgroundColor: const Color(0xFF2A4759),
+          backgroundColor: AppColors.neutralBlack,
           body: IndexedStack(
             index: selectedIndex,
             children: _widgetOptions,
@@ -91,15 +82,20 @@ class __DashboardViewState extends State<_DashboardView> {
 
   Widget _buildBottomNavigationBar(BuildContext context, int selectedIndex) {
     return BottomNavigationBar(
-      backgroundColor: const Color(0xFF2A4759),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white70,
+      backgroundColor: AppColors.neutralDark,
+      selectedItemColor: AppColors.brandPrimary,
+      unselectedItemColor: AppColors.textSecondary,
       type: BottomNavigationBarType.fixed,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-      unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+      selectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.bold,
+        color: AppColors.brandPrimary,
+      ),
+      unselectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.w500,
+        color: AppColors.textSecondary,
+      ),
       currentIndex: selectedIndex,
       onTap: (index) {
-        // When a tab is tapped manually, we still use the cubit to change the state.
         context.read<BottomNavigationCubit>().changeTab(index);
       },
       items: const [
@@ -112,8 +108,7 @@ class __DashboardViewState extends State<_DashboardView> {
           label: 'Activities',
         ),
         BottomNavigationBarItem(
-          icon: Icon(
-              FontAwesomeIcons.history), // Use a different icon for clarity
+          icon: Icon(FontAwesomeIcons.history),
           label: 'History',
         ),
         BottomNavigationBarItem(
