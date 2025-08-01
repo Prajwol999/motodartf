@@ -54,4 +54,40 @@ class ReviewRemoteDataSourceImpl implements ReviewRemoteDataSource {
       return Left(ApiFailure(message: e.toString() , statusCode: 500));
     }
   }
-}
+
+    @override
+  Future<Either<Failure, List<ReviewEntity>>> getServiceReviews(String serviceId) async {
+    try {
+      final user = await userSharedPrefs.getToken();
+      final token = user.fold((l) => null, (r) => r);
+
+      if (token == null) {
+        return Left(ApiFailure(message: "User not authenticated" , statusCode: 401));
+      }
+
+      final response = await _apiService.dio.get(
+        ApiEndpoints.getReviews.replaceFirst(':serviceId', serviceId),
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> reviewData = response.data['data'];
+        final reviews = reviewData.map((review) => ReviewApiModel.fromJson(review).toEntity()).toList();
+        return Right(reviews);
+      } else {
+        return Left(
+          ApiFailure(
+            message: response.data['message'] ?? 'Failed to fetch reviews.',
+            statusCode: response.statusCode!,
+          ),
+        );
+      }
+    } on DioException catch (e) {
+      return Left(ApiFailure(message: e.response?.data['message'] ?? e.message, statusCode: 500));
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString(), statusCode: 500) ,);
+    }
+  }
+  }

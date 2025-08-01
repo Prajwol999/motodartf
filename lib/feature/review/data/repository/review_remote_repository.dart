@@ -14,4 +14,10 @@ class ReviewRepositoryImpl implements IReviewRepository {
   Future<Either<Failure, bool>> addReview(ReviewEntity review) {
     return remoteDataSource.addReview(review);
   }
+  
+  @override
+  Future<Either<Failure, List<ReviewEntity>>> getServiceReviews(String serviceId) {
+    // TODO: implement getServiceReviews
+    return remoteDataSource.getServiceReviews(serviceId) ;
+  }
 }

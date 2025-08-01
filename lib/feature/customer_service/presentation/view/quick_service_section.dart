@@ -7,9 +7,11 @@ import 'package:motofix_app/feature/booking/presentation/view/create_booking.dar
 import 'package:motofix_app/feature/booking/presentation/view_model/booking_view_model.dart';
 import 'package:motofix_app/feature/customer_service/domain/entity/service_entity.dart';
 import 'package:motofix_app/feature/customer_service/presentation/view/all_service.dart';
+import 'package:motofix_app/feature/customer_service/presentation/view/home_screen_content.dart';
 import 'package:motofix_app/feature/customer_service/presentation/view_model/service_event.dart';
 import 'package:motofix_app/feature/customer_service/presentation/view_model/service_state.dart';
 import 'package:motofix_app/feature/customer_service/presentation/view_model/service_view_model.dart';
+import 'package:motofix_app/feature/review/presentation/view_model/review_view_model.dart';
 
 /// A widget that combines the main CTA card and the quick services section.
 class HomeScreenContent extends StatelessWidget {
@@ -125,6 +127,273 @@ class MainCtaCard extends StatelessWidget {
 }
 
 // --- Quick Services Section ---
+// class QuickServicesSection extends StatelessWidget {
+//   const QuickServicesSection({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         _buildHeader(context),
+//         const SizedBox(height: 16),
+//         SizedBox(
+//           height: 160,
+//           child: BlocBuilder<ServiceViewModel, ServiceState>(
+//             builder: (context, state) {
+//               switch (state.status) {
+//                 case ServiceStatus.loading:
+//                 case ServiceStatus.initial:
+//                   return _buildServiceLoadingState();
+//                 case ServiceStatus.failure:
+//                   return _buildServiceErrorState(context, state.errorMessage ?? 'Unknown error');
+//                 case ServiceStatus.success:
+//                   if (state.services.isEmpty) {
+//                     return _buildEmptyServicesState();
+//                   }
+//                   final homeScreenServices = state.services.take(5).toList();
+//                   return ListView.builder(
+//                     scrollDirection: Axis.horizontal,
+//                     physics: const BouncingScrollPhysics(),
+//                     itemCount: homeScreenServices.length,
+//                     itemBuilder: (context, index) => _buildServiceItem(
+//                       context: context,
+//                       service: homeScreenServices[index],
+//                     ),
+//                   );
+//               }
+//             },
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+
+//   Widget _buildHeader(BuildContext context) {
+//     return BlocBuilder<ServiceViewModel, ServiceState>(
+//       builder: (context, state) {
+//         return Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             const Text(
+//               'Quick Services',
+//               style: TextStyle(
+//                 fontSize: 20,
+//                 fontWeight: FontWeight.bold,
+//                 color: AppColors.textPrimary,
+//               ),
+//             ),
+//             if (state.status == ServiceStatus.success && state.services.isNotEmpty)
+//               TextButton(
+//                 onPressed: () {
+//                   Navigator.push(
+//                     context,
+//                     MaterialPageRoute(
+//                       builder: (context) => AllServicesScreen(services: state.services),
+//                     ),
+//                   );
+//                 },
+//                 child: const Text(
+//                   'View All',
+//                   style: TextStyle(
+//                     color: AppColors.brandPrimary,
+//                     fontSize: 15,
+//                     fontWeight: FontWeight.w600,
+//                   ),
+//                 ),
+//               ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+
+//   Widget _buildServiceItem({required BuildContext context, required ServiceEntity service}) {
+//     return GestureDetector(
+//       onTap: () => _onServiceTap(context, service),
+//       child: Container(
+//         width: 140,
+//         margin: const EdgeInsets.only(right: 16),
+//         padding: const EdgeInsets.all(16),
+//         decoration: BoxDecoration(
+//           gradient: const LinearGradient(
+//             begin: Alignment.topLeft,
+//             end: Alignment.bottomRight,
+//             colors: [
+//               AppColors.neutralDarkGrey,
+//               AppColors.neutralDark,
+//             ],
+//           ),
+//           borderRadius: BorderRadius.circular(16),
+//           border: Border.all(color: AppColors.neutralLightGrey, width: 1),
+//         ),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Container(
+//               padding: const EdgeInsets.all(8),
+//               decoration: BoxDecoration(color: AppColors.brandPrimary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+//               child: Icon(_getIconForService(service.name), size: 24, color: AppColors.brandPrimary),
+//             ),
+//             Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(service.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary), maxLines: 2, overflow: TextOverflow.ellipsis),
+//                 const SizedBox(height: 4),
+//                 Text(service.duration ?? 'N/A', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary), maxLines: 1, overflow: TextOverflow.ellipsis),
+//               ],
+//             ),
+//             Text('Rs. ${service.price.toStringAsFixed(0)}', style: const TextStyle(fontSize: 14, color: AppColors.statusSuccess, fontWeight: FontWeight.bold)),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   void _onServiceTap(BuildContext context, ServiceEntity service) {
+//     showDialog(
+//       context: context,
+//       builder: (dialogContext) => AlertDialog(
+//         backgroundColor: AppColors.neutralDarkGrey,
+//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: AppColors.neutralLightGrey)),
+//         title: Row(
+//           children: [
+//             Icon(_getIconForService(service.name), color: AppColors.brandPrimary, size: 24),
+//             const SizedBox(width: 12),
+//             Expanded(child: Text(service.name, style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold))),
+//           ],
+//         ),
+//         content: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             _buildServiceDetailRow('Description', service.description),
+//             const SizedBox(height: 12),
+//             _buildServiceDetailRow('Duration', service.duration ?? 'N/A'),
+//             const SizedBox(height: 12),
+//             _buildServiceDetailRow('Price', 'Rs. ${service.price.toStringAsFixed(0)}'),
+//           ],
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.pop(dialogContext),
+//             child: const Text('Close', style: TextStyle(color: AppColors.textSecondary)),
+//           ),
+//           ElevatedButton(
+//             onPressed: () {
+//               Navigator.pop(dialogContext);
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (_) => BlocProvider.value(
+//                     value: context.read<BookingViewModel>(),
+//                     child: CreateBookingScreen(service: service),
+//                   ),
+//                 ),
+//               );
+//             },
+//             style: ElevatedButton.styleFrom(
+//               backgroundColor: AppColors.brandPrimary,
+//               foregroundColor: AppColors.textPrimary,
+//               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+//             ),
+//             child: const Text('Book Now'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   IconData _getIconForService(String serviceName) {
+//     final lowerCaseName = serviceName.toLowerCase();
+//     if (lowerCaseName.contains('engine')) return FontAwesomeIcons.gears;
+//     if (lowerCaseName.contains('chain')) return FontAwesomeIcons.link;
+//     if (lowerCaseName.contains('brake')) return FontAwesomeIcons.carBurst;
+//     if (lowerCaseName.contains('wash')) return FontAwesomeIcons.soap;
+//     if (lowerCaseName.contains('tire') || lowerCaseName.contains('tyre')) return FontAwesomeIcons.solidCircleDot;
+//     if (lowerCaseName.contains('oil')) return FontAwesomeIcons.oilCan;
+//     if (lowerCaseName.contains('full') || lowerCaseName.contains('general')) return FontAwesomeIcons.motorcycle;
+//     if (lowerCaseName.contains('electrical')) return FontAwesomeIcons.bolt;
+//     if (lowerCaseName.contains('clutch')) return FontAwesomeIcons.circle;
+//     if (lowerCaseName.contains('suspension')) return FontAwesomeIcons.arrowsUpDown;
+//     return FontAwesomeIcons.wrench;
+//   }
+
+//   Widget _buildServiceDetailRow(String label, String value) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 14, fontWeight: FontWeight.w500)),
+//         const SizedBox(height: 4),
+//         Text(value, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
+//       ],
+//     );
+//   }
+
+//   Widget _buildServiceLoadingState() {
+//     return ListView.builder(
+//       scrollDirection: Axis.horizontal,
+//       physics: const NeverScrollableScrollPhysics(),
+//       itemCount: 4,
+//       itemBuilder: (context, index) {
+//         return Container(
+//           width: 140,
+//           margin: const EdgeInsets.only(right: 16),
+//           padding: const EdgeInsets.all(16),
+//           decoration: BoxDecoration(
+//             color: AppColors.neutralDark,
+//             borderRadius: BorderRadius.circular(16),
+//           ),
+//         );
+//       },
+//     );
+//   }
+
+//   Widget _buildServiceErrorState(BuildContext context, String error) {
+//     return Container(
+//       width: double.infinity,
+//       padding: const EdgeInsets.all(20),
+//       decoration: BoxDecoration(color: AppColors.neutralDark, borderRadius: BorderRadius.circular(15)),
+//       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+//         const Icon(FontAwesomeIcons.triangleExclamation, color: AppColors.statusError, size: 25),
+//         const SizedBox(height: 12),
+//         Text('Failed to load services', style: const TextStyle(color: AppColors.textPrimary, fontSize: 16)),
+//         const SizedBox(height: 8),
+//         TextButton(
+//           onPressed: () => context.read<ServiceViewModel>().add(GetAllServicesEvent()),
+//           child: const Text('Try Again', style: TextStyle(color: AppColors.brandPrimary, fontWeight: FontWeight.w600)),
+//         ),
+//       ]),
+//     );
+//   }
+
+//   Widget _buildEmptyServicesState() {
+//     return Container(
+//       width: double.infinity,
+//       padding: const EdgeInsets.all(20),
+//       decoration: BoxDecoration(color: AppColors.neutralDark, borderRadius: BorderRadius.circular(15)),
+//       child: const Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Icon(FontAwesomeIcons.wrench, color: AppColors.textSecondary, size: 32),
+//             SizedBox(height: 12),
+//             Text('No services available', style: TextStyle(color: AppColors.textSecondary, fontSize: 16)),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+
+// --- Main Widget Code ---
+// For ServiceReviewsDialog
+
+// --- Main Widget Code ---
+
 class QuickServicesSection extends StatelessWidget {
   const QuickServicesSection({super.key});
 
@@ -212,7 +481,6 @@ class QuickServicesSection extends StatelessWidget {
       child: Container(
         width: 140,
         margin: const EdgeInsets.only(right: 16),
-        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
@@ -225,26 +493,47 @@ class QuickServicesSection extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.neutralLightGrey, width: 1),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // *** FIX START: Using a Stack to overlay the review icon ***
+        child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: AppColors.brandPrimary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-              child: Icon(_getIconForService(service.name), size: 24, color: AppColors.brandPrimary),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: AppColors.brandPrimary.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Icon(_getIconForService(service.name), size: 24, color: AppColors.brandPrimary),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(service.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary), maxLines: 2, overflow: TextOverflow.ellipsis),
+                      const SizedBox(height: 4),
+                      Text(service.duration ?? 'N/A', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                  Text('Rs. ${service.price.toStringAsFixed(0)}', style: const TextStyle(fontSize: 14, color: AppColors.statusSuccess, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(service.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary), maxLines: 2, overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 4),
-                Text(service.duration ?? 'N/A', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary), maxLines: 1, overflow: TextOverflow.ellipsis),
-              ],
+            Positioned(
+              top: 8,
+              right: 8,
+              child: IconButton(
+                icon: const Icon(FontAwesomeIcons.solidCommentDots, color: AppColors.textSecondary, size: 18),
+                onPressed: () => _showReviewsDialog(context, service),
+              ),
             ),
-            Text('Rs. ${service.price.toStringAsFixed(0)}', style: const TextStyle(fontSize: 14, color: AppColors.statusSuccess, fontWeight: FontWeight.bold)),
           ],
         ),
+        // *** FIX END ***
       ),
     );
   }
@@ -303,6 +592,20 @@ class QuickServicesSection extends StatelessWidget {
     );
   }
 
+  // *** NEW METHOD: To show the reviews dialog ***
+  void _showReviewsDialog(BuildContext context, ServiceEntity service) {
+    showDialog(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: context.read<ReviewBloc>(),
+        child: ServiceReviewsDialog(
+          serviceId: service.serviceId!,
+          serviceName: service.name,
+        ),
+      ),
+    );
+  }
+
   IconData _getIconForService(String serviceName) {
     final lowerCaseName = serviceName.toLowerCase();
     if (lowerCaseName.contains('engine')) return FontAwesomeIcons.gears;
@@ -313,7 +616,7 @@ class QuickServicesSection extends StatelessWidget {
     if (lowerCaseName.contains('oil')) return FontAwesomeIcons.oilCan;
     if (lowerCaseName.contains('full') || lowerCaseName.contains('general')) return FontAwesomeIcons.motorcycle;
     if (lowerCaseName.contains('electrical')) return FontAwesomeIcons.bolt;
-    if (lowerCaseName.contains('clutch')) return FontAwesomeIcons.circle;
+    if (lowerCaseName.contains('clutch')) return FontAwesomeIcons.solidCircle;
     if (lowerCaseName.contains('suspension')) return FontAwesomeIcons.arrowsUpDown;
     return FontAwesomeIcons.wrench;
   }

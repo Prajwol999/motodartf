@@ -277,6 +277,7 @@ import 'package:motofix_app/feature/review/data/data_source/review_remote_data_s
 import 'package:motofix_app/feature/review/data/repository/review_remote_repository.dart';
 import 'package:motofix_app/feature/review/domain/repository/review_repository.dart';
 import 'package:motofix_app/feature/review/domain/usecase/add_review_usecase.dart';
+import 'package:motofix_app/feature/review/domain/usecase/get_review_usecase.dart';
 import 'package:motofix_app/feature/review/presentation/view_model/review_view_model.dart';
 import 'package:motofix_app/feature/splash/view_model/spash_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -555,10 +556,14 @@ Future<void> _initReviewModule() async {
     ),
   );
 
+  serviceLocator.registerFactory<GetServiceReviewsUsecase>(
+    () => GetServiceReviewsUsecase(repository : serviceLocator<IReviewRepository>())
+  ) ;
+
   // ViewModel (BLoC)
   serviceLocator.registerFactory<ReviewBloc>(
     () => ReviewBloc(
-      addReviewUsecase: serviceLocator<AddReviewUsecase>(),
+      addReviewUsecase: serviceLocator<AddReviewUsecase>(), getServiceReviewsUsecase: serviceLocator<GetServiceReviewsUsecase>(),
     ),
   );
 }

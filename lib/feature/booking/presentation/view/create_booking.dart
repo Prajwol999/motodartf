@@ -1,10 +1,9 @@
-// lib/features/booking/presentation/pages/create_booking_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/common/app_colors.dart';
+// No need for AppColors if not used, otherwise ensure it's a valid import.
+// import '../../../../core/common/app_colors.dart'; 
 import '../../../customer_service/domain/entity/service_entity.dart';
 import '../view_model/booking_event.dart';
 import '../view_model/booking_view_model.dart';
@@ -75,20 +74,28 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
     }
   }
 
+  // *** FIX START: Corrected navigation and data loading logic ***
   void _navigateToBookingView(BuildContext context) {
+    // Get the ViewModel instance from the current context BEFORE navigating.
+    final bookingViewModel = context.read<BookingViewModel>();
+
+    // Dispatch the event to reload bookings. The state will update,
+    // and BookingView will receive the latest state when it builds.
+    bookingViewModel.add(LoadUserBookingsEvent());
+
+    // Navigate to BookingView, providing it with the existing ViewModel.
+    // This solves the ProviderNotFoundError.
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => const BookingView(),
+        builder: (_) => BlocProvider.value(
+          value: bookingViewModel, // Provide the existing instance
+          child: const BookingView(),
+        ),
       ),
-      (route) => route.isFirst,
+      (route) => route.isFirst, // Remove all previous routes
     );
-    
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (context.mounted) {
-        context.read<BookingViewModel>().add(LoadUserBookingsEvent());
-      }
-    });
   }
+  // *** FIX END ***
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +201,7 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                 ),
               );
             
+            // Wait for the SnackBar to be visible, then navigate.
             Future.delayed(const Duration(milliseconds: 1500), () {
               if (mounted) {
                 _navigateToBookingView(context);
@@ -499,11 +507,11 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                 ),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Selected Service',
                       style: TextStyle(
                         color: Color(0xFF7D8590),
@@ -512,10 +520,10 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                         letterSpacing: 0.5,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'GARAGE SERVICE PACKAGE',
-                      style: TextStyle(
+                      widget.service.name, // Display dynamic service name
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -553,17 +561,17 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.service.name.toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                      'TOTAL COST',
+                      style: TextStyle(
+                        color: const Color(0xFF7D8590).withOpacity(0.8),
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                       ),
                     ),
                     const SizedBox(height: 4),
                     const Text(
-                      'Professional Service',
+                      'Includes all parts & labor',
                       style: TextStyle(
                         color: Color(0xFF7D8590),
                         fontSize: 12,
@@ -627,24 +635,17 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
     int? maxLines = 1,
     void Function()? onTap,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: labelText,
-          hintText: hintText,
-          prefixIcon: prefixIcon != null
-              ? Container(
-                  margin: const EdgeInsets.all(12),
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        hintText: hintText,
+        prefixIcon: prefixIcon != null
+            ? Align(
+                widthFactor: 1.0,
+                heightFactor: 1.0,
+                child: Container(
+                  margin: const EdgeInsets.only(left: 12, right: 8),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFF6B35).withOpacity(0.15),
@@ -655,62 +656,59 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                     color: const Color(0xFFFF6B35),
                     size: 20,
                   ),
-                )
-              : null,
-          labelStyle: const TextStyle(
-            color: Color(0xFF7D8590),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-          hintStyle: TextStyle(
-            color: const Color(0xFF7D8590).withOpacity(0.6),
-            fontSize: 14,
-          ),
-          filled: true,
-          fillColor: const Color(0xFF21262D),
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Color(0xFF30363D),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Color(0xFFFF6B35),
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Color(0xFFDA3633),
-              width: 1,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Color(0xFFDA3633),
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: prefixIcon != null ? 60 : 16,
-            vertical: 16,
-          ),
-        ),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 15,
+                ),
+              )
+            : null,
+        labelStyle: const TextStyle(
+          color: Color(0xFF7D8590),
+          fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
-        validator: validator,
-        readOnly: readOnly,
-        maxLines: maxLines,
-        onTap: onTap,
+        hintStyle: TextStyle(
+          color: const Color(0xFF7D8590).withOpacity(0.6),
+          fontSize: 14,
+        ),
+        filled: true,
+        fillColor: const Color(0xFF21262D),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Color(0xFF30363D),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Color(0xFFFF6B35),
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Color(0xFFDA3633),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Color(0xFFDA3633),
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+      ),
+      validator: validator,
+      readOnly: readOnly,
+      maxLines: maxLines,
+      onTap: onTap,
+      cursorColor: const Color(0xFFFF6B35),
     );
   }
 }

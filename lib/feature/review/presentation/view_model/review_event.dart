@@ -1,5 +1,3 @@
-
-// Abstract base class for all events related to the review feature
 import 'package:equatable/equatable.dart';
 import 'package:motofix_app/feature/review/domain/entity/review_entity.dart';
 
@@ -19,6 +17,13 @@ class AddReviewSubmitted extends ReviewEvent {
   List<Object> get props => [review];
 }
 
-/// Event triggered to reset the BLoC's state back to initial.
-/// This is useful after a success or failure dialog is dismissed.
+class FetchServiceReviews extends ReviewEvent {
+  final String serviceId;
+
+  const FetchServiceReviews(this.serviceId);
+
+  @override
+  List<Object> get props => [serviceId];
+}
+
 class ReviewReset extends ReviewEvent {}

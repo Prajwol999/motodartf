@@ -104,21 +104,21 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
     );
 
     result.fold(
-      (failure) {
-        emit(state.copyWith(isLoading: false, isSuccess: false));
-        showMySnackBar(
-          context: event.context,
-          color: Colors.red,
-          message: failure.message,
-        );
-      },
-      // 2. Handle Success (Right side)
       (success) {
         emit(state.copyWith(isLoading: false, isSuccess: true));
         showMySnackBar(
           context: event.context,
           message: "Registration successful! Please sign in.",
           color: Colors.green,
+        );
+      },
+      // 2. Handle Success (Right side)
+      (failure) {
+        emit(state.copyWith(isLoading: false, isSuccess: false));
+        showMySnackBar(
+          context: event.context,
+          message: "Registration Failed",
+          color: Colors.red,
         );
         add(NavigateToLoginEvent(context: event.context));
       },
