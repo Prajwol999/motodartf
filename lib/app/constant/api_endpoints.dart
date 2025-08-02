@@ -1,3 +1,5 @@
+// lib/app/constant/api_endpoints.dart
+
 import 'package:flutter/widgets.dart';
 
 class ApiEndpoints {
@@ -13,6 +15,11 @@ class ApiEndpoints {
 
   static const String baseUrl = "$serverAddress/api/";
   static const String imageUrl = "$serverAddress/uploads/";
+
+  // --- ADD THIS ---
+  //========== Chatbot ==============
+  static const String chat = "chat";
+  // --- END OF ADDITION ---
 
   //============== Auth ==============
   static const String login = "auth/login";
