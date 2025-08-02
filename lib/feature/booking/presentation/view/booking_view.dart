@@ -211,7 +211,7 @@ class _BookingViewState extends State<BookingView> with TickerProviderStateMixin
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              state.error,
+                              state.message,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -374,7 +374,7 @@ class _BookingViewState extends State<BookingView> with TickerProviderStateMixin
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Failed to load service records:\n${state.error}',
+                        'Failed to load service records:\n${state.message}',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Color(0xFF7D8590),

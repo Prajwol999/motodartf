@@ -242,7 +242,7 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                                 ),
                               ),
                               Text(
-                                state.error,
+                                state.message,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.white.withOpacity(0.9),

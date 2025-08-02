@@ -8,34 +8,44 @@ abstract class BookingState extends Equatable {
   List<Object?> get props => [];
 }
 
+// Represents the initial state before any action has been taken.
 class BookingInitial extends BookingState {}
 
+// Represents a state where data is being fetched (e.g., the initial load).
 class BookingLoading extends BookingState {}
 
+// Represents a successful state where a list of bookings is available.
+// It can ALSO carry optional messages for the UI to display (e.g., in a snackbar).
 class BookingLoadSuccess extends BookingState {
   final List<BookingEntity> bookings;
-  final String? successMessage; // ADDED: To carry a success message
+  final String? successMessage; // Optional: For success feedback (e.g., "Booking deleted")
+  final String? error;          // Optional: For error feedback (e.g., "Failed to delete")
 
-  // UPDATED: Added optional successMessage parameter
-  const BookingLoadSuccess(this.bookings, {this.successMessage});
+  const BookingLoadSuccess(
+    this.bookings, {
+    this.successMessage,
+    this.error,
+  });
 
   @override
-  List<Object?> get props => [bookings, successMessage];
+  List<Object?> get props => [bookings, successMessage, error];
 }
 
-// This state is for one-off actions like creation or deletion success feedback
+// Represents a general failure state, typically when the whole screen fails to load.
+class BookingFailure extends BookingState {
+  final String message; // Renamed from 'error' for clarity
+  const BookingFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+// This state can be used for actions that navigate away or don't need to preserve the list,
+// such as a successful booking creation that pops the current screen.
 class BookingActionSuccess extends BookingState {
   final String message;
   const BookingActionSuccess(this.message);
 
   @override
   List<Object?> get props => [message];
-}
-
-class BookingFailure extends BookingState {
-  final String error;
-  const BookingFailure(this.error);
-
-  @override
-  List<Object?> get props => [error];
 }

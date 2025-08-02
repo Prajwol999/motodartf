@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:motofix_app/app/constant/api_endpoints.dart';
 import 'package:motofix_app/core/network/api_service.dart';
-import 'package:motofix_app/core/network/dio_error_interceptor.dart';
-
-import '../../../domain/entity/booking_entity.dart';
-import '../../dto/get_all_booking_dto.dart';
-import '../../model/booking_api_model.dart';
-import '../booking_data_source.dart';
+import 'package:motofix_app/feature/booking/data/data_source/booking_data_source.dart';
+import 'package:motofix_app/feature/booking/domain/entity/booking_entity.dart';
+import 'package:motofix_app/feature/booking/data/dto/get_all_booking_dto.dart';
+import 'package:motofix_app/feature/booking/data/model/booking_api_model.dart';
 
 class RemoteBookingDataSource implements BookingDataSource {
   final ApiService _apiService;
+
   RemoteBookingDataSource({
     required ApiService apiService,
   }) : _apiService = apiService;
@@ -30,45 +29,48 @@ class RemoteBookingDataSource implements BookingDataSource {
         'notes': entity.notes,
       };
 
+      // Assuming your ApiService is configured with the baseUrl.
       final response = await _apiService.dio.post(
         ApiEndpoints.createBooking,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
         data: requestBody,
       );
 
-      if (response.statusCode == 201) {
-        return;
-      } else {
+      // A successful creation should return 201.
+      if (response.statusCode != 201) {
         throw Exception(
-            'Failed to create booking: ${response.data['message'] ?? response.statusMessage}');
+            'Failed to create booking. Status: ${response.statusCode}, Message: ${response.data['message'] ?? response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ??
-          'Failed to create booking: ${e.message}');
+      throw Exception(
+          'API Error on create booking: ${e.response?.data['message'] ?? e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occurred: $e');
+      throw Exception('An unexpected error occurred during booking creation: $e');
     }
   }
 
   @override
   Future<void> deleteUserBooking(String bookingId, String? token) async {
     try {
+      // CRITICAL FIX: Replace the ':id' placeholder with the actual bookingId.
+      final String deleteUrl = 
+          ApiEndpoints.deleteBooking.replaceAll(':id', bookingId);
+
       final response = await _apiService.dio.delete(
-        '${ApiEndpoints.deleteBooking}/$bookingId',
+        deleteUrl, // Use the corrected URL
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      if (response.statusCode == 200) {
-        return;
-      } else {
-        // Handle unexpected status codes
-        throw Exception('Failed to delete booking : ${response.statusMessage}');
+      // A successful deletion can be 200 (OK) or 204 (No Content).
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception(
+            'Failed to delete booking. Status: ${response.statusCode}, Message: ${response.data['message'] ?? response.statusMessage}');
       }
     } on DioException catch (e) {
-      // Handle DioException
-      throw Exception('Failed to delete bookings: ${e.message}');
+      throw Exception(
+          'API Error on delete booking: ${e.response?.data['message'] ?? e.message}');
     } catch (e) {
-      throw Exception('Failed to delete Bookings : $e');
+      throw Exception('An unexpected error occurred during booking deletion: $e');
     }
   }
 
@@ -79,64 +81,73 @@ class RemoteBookingDataSource implements BookingDataSource {
         ApiEndpoints.getAllBooking,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-      print("All booking user $response");
 
       if (response.statusCode == 200) {
         GetAllBookingDto getAllBookingDto =
             GetAllBookingDto.fromJson(response.data);
         return BookingApiModel.toEntityList(getAllBookingDto.data);
       } else {
-        throw Exception('Failed to fetch bookings  :${response.statusMessage}');
+        throw Exception(
+            'Failed to fetch bookings. Status: ${response.statusCode}, Message: ${response.data['message'] ?? response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception("failed to booking : ${e.message} ");
+      throw Exception(
+          'API Error fetching bookings: ${e.response?.data['message'] ?? e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occured : $e');
+      throw Exception('An unexpected error occurred while fetching bookings: $e');
     }
   }
-  
+
   @override
   Future<List<BookingEntity>> getCompletedBookings(String? token) async {
     try {
+      // NOTE: Ensure your ApiService is configured with the baseUrl.
+      // The path in ApiEndpoints should be relative (e.g., 'user/booking/completed').
       final response = await _apiService.dio.get(
-        ApiEndpoints.baseUrl + ApiEndpoints.completedBookings, // Use correct endpoint
+        ApiEndpoints.completedBookings,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-      print('completejsndnjgshsng $response') ;
 
       if (response.statusCode == 200) {
         GetAllBookingDto getAllBookingDto = GetAllBookingDto.fromJson(response.data);
         return BookingApiModel.toEntityList(getAllBookingDto.data);
       } else {
-        throw Exception('Failed to fetch completed bookings: ${response.statusMessage}');
+        throw Exception(
+            'Failed to fetch completed bookings. Status: ${response.statusCode}, Message: ${response.data['message'] ?? response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception("Failed to fetch completed bookings: ${e.message}");
+      throw Exception(
+          'API Error fetching completed bookings: ${e.response?.data['message'] ?? e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occurred: $e');
+      throw Exception('An unexpected error occurred while fetching completed bookings: $e');
     }
   }
 
   @override
   Future<BookingEntity> getBookingById(String bookingId, String? token) async {
     try {
-      // Append the bookingId to the URL
+      // ROBUSTNESS FIX: Replace the placeholder to prevent potential bugs.
+      final String bookingUrl = 
+          ApiEndpoints.bookingById.replaceAll(':id', bookingId);
+          
       final response = await _apiService.dio.get(
-        ApiEndpoints.baseUrl + ApiEndpoints.bookingById + bookingId,
+        bookingUrl,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
       if (response.statusCode == 200) {
-        // The response data for a single booking is likely nested under a 'data' key
+        // The response data for a single booking is likely nested under a 'data' key.
         BookingApiModel bookingModel = BookingApiModel.fromJson(response.data['data']);
         return bookingModel.toEntity();
       } else {
-        throw Exception('Failed to fetch booking details: ${response.statusMessage}');
+        throw Exception(
+            'Failed to fetch booking details. Status: ${response.statusCode}, Message: ${response.data['message'] ?? response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception("Failed to fetch booking details: ${e.message}");
+      throw Exception(
+          'API Error fetching booking details: ${e.response?.data['message'] ?? e.message}');
     } catch (e) {
-      throw Exception('An unexpected error occurred: $e');
+      throw Exception('An unexpected error occurred while fetching booking details: $e');
     }
   }
 }
